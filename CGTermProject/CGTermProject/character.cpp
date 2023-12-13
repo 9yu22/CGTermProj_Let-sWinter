@@ -15,6 +15,8 @@ character::character()
         normals[i] = objReader.out_normals[i];
         uvs[i] = objReader.out_uvs[i];
     }
+
+    scale = glm::vec3(0.3, 0.3, 0.3);
 }
 
 void character::render(GLuint ID)
@@ -24,9 +26,9 @@ void character::render(GLuint ID)
     model = glm::mat4(1.0);
     model = glm::translate(model, pos);
     model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0, 1, 0));
+    model = glm::scale(model, scale);
     glm::vec3 bottomLeftOffset = glm::vec3(-11.0, -10.0, 17.0); 
     model = glm::translate(model, bottomLeftOffset);
-    model = glm::scale(model, scale);
 
     //model = glm::mat4(1.0);
     //model = glm::translate(model, glm::vec3(moveLeftRight, moveUpDown, moveBackForth));

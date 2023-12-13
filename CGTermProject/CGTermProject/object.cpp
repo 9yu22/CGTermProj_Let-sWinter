@@ -17,12 +17,6 @@ Object::Object(vector<float> vertices, vector<float> colors, vector<GLubyte> ind
     initModel(vertices, colors, indices);
 }
 
-// Using an Obj file
-// Object::Object(const char *filename)
-// {
-//     object = objReader.loadObj(filename);
-// }
-
 void Object::initPos()
 {
     pos = glm::vec3(0.0f, 0.0f, 0.0f);
