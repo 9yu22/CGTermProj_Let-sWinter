@@ -25,7 +25,7 @@ protected:
     glm::mat4 model;
 
     vector<float> _vertices;
-    vector<float> colors;
+    vector<float> _colors;
     vector<GLubyte> _indices;
 
     objRead objReader;

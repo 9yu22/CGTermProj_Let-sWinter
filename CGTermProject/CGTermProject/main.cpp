@@ -2,6 +2,7 @@
 #include "shaders.h"
 #include "character.h"
 #include "camera.h"
+#include "block.h"
 
 #include "bg.h"
 
@@ -18,6 +19,7 @@ GLuint shaderProgramID;
 character LEGO;
 Camera camera;
 BG bg;
+Block BLOCK;
 
 float angle;
 float movementvalue = 0.1f;
@@ -86,6 +88,9 @@ void main(int argc, char** argv)
     
     LEGO.initBuffer();
     LEGO.initTexture();
+    BLOCK.initBuffer();
+    BLOCK.initTexture();
+    
     init();
 
     
@@ -105,6 +110,7 @@ GLvoid drawScene()
     
     camera.setCamera(shaderProgramID);
     LEGO.render(shaderProgramID);
+    BLOCK.render(shaderProgramID);
     bg.render(shaderProgramID);
     
     glutSwapBuffers();

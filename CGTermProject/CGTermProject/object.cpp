@@ -61,7 +61,7 @@ void Object::setModelColor(vector<float> colors)
 {
     for (int i = 0; i < colors.size(); i++)
     {
-        this->colors.push_back(colors[i]);
+        this->_colors.push_back(colors[i]);
     }
 }
 void Object::setModelIndices(vector<GLubyte> indices)
@@ -124,7 +124,7 @@ void Object::_initBuffer()
 
     glGenBuffers(1, &cbo);
     glBindBuffer(GL_ARRAY_BUFFER, cbo);
-    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(float), &colors[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(float), &_colors[0], GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
     glEnableVertexAttribArray(1);
 

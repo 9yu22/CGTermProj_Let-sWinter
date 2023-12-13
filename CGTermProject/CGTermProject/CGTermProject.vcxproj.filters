@@ -36,6 +36,9 @@
     <ClCompile Include="bg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="block.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -60,6 +63,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="bg.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
