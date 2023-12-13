@@ -22,6 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <windows.h>
+#include <string.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

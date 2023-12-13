@@ -74,7 +74,8 @@ void character::initTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char* data = stbi_load("LEGO_Texture.jpg", &width, &height, &nrChannels, 0);
+    //unsigned char* data = stbi_load("LEGO_Texture.jpg", &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load("minifig.png", &width, &height, &nrChannels, 0);
 
     // cout << "check image load" << endl;
     // cout << width << " " << height << " " << nrChannels << endl;
