@@ -21,18 +21,19 @@ void character::render(GLuint ID)
 {
     glUseProgram(ID);
 
-    //model = glm::mat4(1.0);
-    //model = glm::translate(model, pos);
-    //model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0,1,0));
-    //model = glm::translate(model, glm::vec3())
-    //model = glm::scale(model, scale);
-
     model = glm::mat4(1.0);
-    model = glm::translate(model, pos);  // 기본 위치로 이동
+    model = glm::translate(model, pos);
     model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0, 1, 0));
-    glm::vec3 bottomLeftOffset = glm::vec3(-10.0, -10.0, 17.0); 
+    glm::vec3 bottomLeftOffset = glm::vec3(-11.0, -10.0, 17.0); 
     model = glm::translate(model, bottomLeftOffset);
     model = glm::scale(model, scale);
+
+    //model = glm::mat4(1.0);
+    //model = glm::translate(model, glm::vec3(moveLeftRight, moveUpDown, moveBackForth));
+    //model = glm::rotate(model, rotationAngle, glm::vec3(0, 1, 0));
+    //glm::vec3 bottomLeftOffset = glm::vec3(-11.0, -10.0, 17.0);
+    //model = glm::translate(model, bottomLeftOffset);
+    //model = glm::scale(model, scale);
 
 
     glUniformMatrix4fv(glGetUniformLocation(ID, "model"), 1, GL_FALSE, glm::value_ptr(model));

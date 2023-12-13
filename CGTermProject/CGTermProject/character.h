@@ -12,6 +12,11 @@ private:
 
 	unsigned int texture;
 
+	float moveLeftRight = 0.f;
+	float moveBackForth = 0.f;
+	float moveUpDown = 0.f;
+	float rotationAngle = 0.f;
+
 public:
 	character();
 	void render(GLuint shaderProgramID) override;
