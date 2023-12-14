@@ -24,7 +24,7 @@ BG bg;
 BlockMgr blocks;
 
 float angle;
-float movementvalue = 0.1f;
+float movementvalue = 0.15f;
 bool blockMoving = true;
 
 void yAxisMovementTimer(int value);
@@ -41,7 +41,7 @@ void welcomeDisplay()
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg0[i]);
     }
 
-    glColor3f(0.529412,	0.807843, 0.980392);
+    glColor3f(0.529412, 0.807843, 0.980392);
     glRasterPos3f(-0.2, 0.1, 0);
     char msg1[] = "Let's Winter!!";
     for (int i = 0; i < strlen(msg1); i++) {
@@ -82,9 +82,10 @@ void welcomeDisplay()
 
     //std::getline(std::cin, input);
 
-    
+
     glutSwapBuffers();
 }
+
 
 void main(int argc, char** argv)
 {
@@ -114,7 +115,7 @@ void main(int argc, char** argv)
     
     init();
 
-    glutTimerFunc(50, blockMovingTimer, 1);
+    
     
     glutKeyboardFunc(keyboard);
     glutDisplayFunc(welcomeDisplay); //opening
@@ -132,7 +133,7 @@ GLvoid drawScene()
 
     // 카메라 시점 -> 캐릭터에게 고정
     camera.setEye(glm::vec3(LEGO.getPos().x, LEGO.getPos().y + 1.f, LEGO.getPos().z + 10.f));
-    camera.setTarget(glm::vec3(LEGO.getPos().x, 0.f, LEGO.getPos().z));
+    camera.setTarget(glm::vec3(LEGO.getPos().x, LEGO.getPos().y, LEGO.getPos().z));
 
     // 블록 <-> 캐릭터 충돌체크
     if (blocks.checkCollision(LEGO.getPos()))
@@ -158,6 +159,7 @@ GLvoid keyboard(unsigned char key, int x, int y)
     case 'x':
     case 'X':
         glutDisplayFunc(drawScene);
+        glutTimerFunc(50, blockMovingTimer, 1);
         break;
 
     case 'r':
