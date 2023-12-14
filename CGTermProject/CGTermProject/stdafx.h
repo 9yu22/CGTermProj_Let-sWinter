@@ -8,9 +8,9 @@
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <gl/glm/glm.hpp>
+#include <gl/glm/ext.hpp>
+#include <gl/glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include <stdlib.h>
@@ -23,6 +23,7 @@
 #include <sstream>
 #include <windows.h>
 #include <string.h>
+#include <mmsystem.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>

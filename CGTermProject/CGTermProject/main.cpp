@@ -27,6 +27,10 @@ float angle;
 float movementvalue = 0.1f;
 bool blockMoving = true;
 
+void yAxisMovementTimer(int value);
+bool robotJump = false;
+bool jumpdown = false;
+
 void welcomeDisplay()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -63,6 +67,20 @@ void welcomeDisplay()
     for (int i = 0; i < strlen(msg4); i++) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg4[i]);
     }
+
+    std::cout << "Playing music \n";
+    PlaySound(TEXT("audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
+    //std::string input;
+    //std::getline(std::cin, input);
+    //PlaySound(0, 0, 0);
+    //std::cout << "Stopped music \n";
+
+    //std::getline(std::cin, input);
+    //std::cout << "Playing music \n";
+    //PlaySound(TEXT("audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
+    //std::getline(std::cin, input);
 
     
     glutSwapBuffers();
@@ -159,8 +177,11 @@ GLvoid keyboard(unsigned char key, int x, int y)
     case 's':
         LEGO.setPosZ(LEGO.getPos().z + movementvalue);
         break;
-    case 'j':
+    case 'f': //jump
+        robotJump = true;
+        glutTimerFunc(10, yAxisMovementTimer, 1);
         break;
+
 
     case 'Q':
     case 'q':
@@ -182,6 +203,40 @@ void blockMovingTimer(int value)
     {
         blocks.moveAllBlocks();
         glutTimerFunc(50, blockMovingTimer, 1);
+    }
+    glutPostRedisplay();
+}
+
+void yAxisMovementTimer(int value)
+{
+
+    if (robotJump) {
+
+        LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        //cout << LEGO.getPos().y << endl;
+
+        if (LEGO.getPos().y > 0.5f) {
+            robotJump = false;
+            jumpdown = true;
+            glutTimerFunc(25, yAxisMovementTimer, value);
+        }
+
+        else {
+            glutTimerFunc(25, yAxisMovementTimer, value);
+        }
+
+    }
+    if (jumpdown)
+    {
+        LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+
+        if (LEGO.getPos().y > 0.f) {
+            glutTimerFunc(25, yAxisMovementTimer, value);
+        }
+        else if (LEGO.getPos().y <= 0.f) {
+            jumpdown = !jumpdown;
+            //cout << "jump ³¡" << endl;
+        }
     }
     glutPostRedisplay();
 }
