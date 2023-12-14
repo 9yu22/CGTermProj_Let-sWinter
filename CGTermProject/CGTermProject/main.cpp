@@ -2,7 +2,7 @@
 #include "shaders.h"
 #include "character.h"
 #include "camera.h"
-#include "block.h"
+#include "blockMgr.h"
 
 #include "bg.h"
 
@@ -10,6 +10,8 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid keyboard(unsigned char key, int x, int y);
 void init();
+
+void blockMovingTimer(int value);
 
 GLclampf g_color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
@@ -19,10 +21,11 @@ GLuint shaderProgramID;
 character LEGO;
 Camera camera;
 BG bg;
-Block BLOCK;
+BlockMgr blocks;
 
 float angle;
 float movementvalue = 0.1f;
+bool blockMoving = true;
 
 void welcomeDisplay()
 {
@@ -88,11 +91,12 @@ void main(int argc, char** argv)
     
     LEGO.initBuffer();
     LEGO.initTexture();
-    BLOCK.initBuffer();
-    BLOCK.initTexture();
+
+    blocks.initList();
     
     init();
 
+    glutTimerFunc(50, blockMovingTimer, 1);
     
     glutKeyboardFunc(keyboard);
     glutDisplayFunc(welcomeDisplay); //opening
@@ -107,10 +111,18 @@ GLvoid drawScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(shaderProgramID);
+
+    // 카메라 시점 -> 캐릭터에게 고정
+    camera.setEye(glm::vec3(LEGO.getPos().x, LEGO.getPos().y + 1.f, LEGO.getPos().z + 10.f));
+    camera.setTarget(glm::vec3(LEGO.getPos().x, 0.f, LEGO.getPos().z));
+
+    // 블록 <-> 캐릭터 충돌체크
+    if (blocks.checkCollision(LEGO.getPos()))
+        cout << "충돌" << endl;
     
     camera.setCamera(shaderProgramID);
     LEGO.render(shaderProgramID);
-    BLOCK.render(shaderProgramID);
+    blocks.render(shaderProgramID);
     bg.render(shaderProgramID);
     
     glutSwapBuffers();
@@ -162,4 +174,14 @@ void init()
 {
     bg.initBuffer();
     bg.initTexture();
+}
+
+void blockMovingTimer(int value)
+{
+    if (blockMoving)
+    {
+        blocks.moveAllBlocks();
+        glutTimerFunc(50, blockMovingTimer, 1);
+    }
+    glutPostRedisplay();
 }

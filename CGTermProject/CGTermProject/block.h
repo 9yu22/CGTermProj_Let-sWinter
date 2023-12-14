@@ -5,6 +5,9 @@
 class Block : public Object
 {
 private:
+	glm::vec3 velocity = {};
+	float scaleVelocity = 0.f;
+
 	GLint vtSize;
 	vector<glm::vec3> vertices;
 	vector<glm::vec3> colors;
@@ -15,8 +18,15 @@ private:
 
 public:
 	Block();
+	Block(int x, int y, int z);
 	void render(GLuint shaderProgramID) override;
 	void initBuffer() override;
 	void initTexture() override;
+
+	void setVelocity(glm::vec3 vel);
+	void setScaleV(float sv);
+
+	glm::vec3 getVelocity();
+	float getScaleV();
 };
 

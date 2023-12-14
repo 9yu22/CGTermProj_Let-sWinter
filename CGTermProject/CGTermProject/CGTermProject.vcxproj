@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="block.cpp" />
+    <ClCompile Include="blockMgr.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="main.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="bg.h" />
     <ClInclude Include="block.h" />
+    <ClInclude Include="blockMgr.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="object.h" />
