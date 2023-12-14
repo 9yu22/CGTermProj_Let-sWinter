@@ -18,7 +18,7 @@ private:
 
 public:
 	Block();
-	Block(int x, int y, int z);
+	Block(int x, int y, int z, bool random);
 	void render(GLuint shaderProgramID) override;
 	void initBuffer() override;
 	void initTexture() override;

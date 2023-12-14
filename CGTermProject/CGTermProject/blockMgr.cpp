@@ -2,11 +2,14 @@
 
 BlockMgr::BlockMgr()
 {
+	Block centerB(0, -2, 0, false);
+	this->blockList.push_back(centerB);
+
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			Block newB(-6 + j * 4, -2, 6 + -i * 4);
+			Block newB(-6 + j * 4, -2, 6 + -i * 4, true);
 			this->blockList.push_back(newB);
 		}
 	}
@@ -15,7 +18,7 @@ BlockMgr::BlockMgr()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			Block newB(-22 + j * 4, -2, 22 + -i * 4);
+			Block newB(-22 + j * 4, -2, 22 + -i * 4, true);
 			this->blockList.push_back(newB);
 		}
 	}
@@ -24,7 +27,7 @@ BlockMgr::BlockMgr()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			Block newB(-6 + j * 4, -2, 44 + -i * 4);
+			Block newB(-6 + j * 4, -2, 44 + -i * 4, false);
 			this->blockList.push_back(newB);
 		}
 	}
@@ -33,7 +36,7 @@ BlockMgr::BlockMgr()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			Block newB(22 + j * 4, -2, 22 + -i * 4);
+			Block newB(22 + j * 4, -2, 22 + -i * 4, true);
 			this->blockList.push_back(newB);
 		}
 	}
@@ -64,18 +67,21 @@ void BlockMgr::getInfo()
 	}
 }
 
-bool BlockMgr::checkCollision(glm::vec3 characterPos)
+Block BlockMgr::checkCollision(glm::vec3 characterPos)
 {
 	for (Block& b : blockList)
 	{
-		if (characterPos.x >= b.getPos().x - 1.f && characterPos.x <= b.getPos().x + 1.f &&
-			characterPos.z >= b.getPos().z - 1.f && characterPos.z <= b.getPos().z + 1.f)
+		if (characterPos.x >= b.getPos().x - b.getScale().y && characterPos.x <= b.getPos().x + b.getScale().y &&
+			characterPos.z >= b.getPos().z - b.getScale().y && characterPos.z <= b.getPos().z + b.getScale().y)
 		{
-			if (characterPos.y == b.getPos().y + 2.f)
-				return true;
+			//cout << "블록영역" << endl;
+			//cout << "내 위치: " << characterPos.x << "," << characterPos.y << "," << characterPos.z << endl;
+			//cout << "블록(-x~x / -z~z): " << b.getPos().x - b.getScale().x / 2 << "," << b.getPos().x + b.getScale().x / 2 << endl;
+			if (characterPos.y <= b.getPos().y + b.getScale().y)
+				return b;
 		}
 	}
-	return false;
+	return Block(-10, -10, -10, false);
 	
 }
 

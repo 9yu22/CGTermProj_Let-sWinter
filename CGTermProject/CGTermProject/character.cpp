@@ -16,7 +16,7 @@ character::character()
         uvs[i] = objReader.out_uvs[i];
     }
 
-    pos = glm::vec3(0.f, 0.f, 15.f);
+    pos = glm::vec3(0.f, 0.0f, 0.f);
     scale = glm::vec3(0.3, 0.3, 0.3);
 }
 
@@ -28,7 +28,7 @@ void character::render(GLuint ID)
     model = glm::translate(model, pos);
     model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0, 1, 0));
     model = glm::scale(model, scale);
-    glm::vec3 bottomLeftOffset = glm::vec3(-11.5f, -10.0f, 20.0f); 
+    glm::vec3 bottomLeftOffset = glm::vec3(-11.5f, -7.5f, 16.0f); 
     model = glm::translate(model, bottomLeftOffset);
 
     //model = glm::mat4(1.0);

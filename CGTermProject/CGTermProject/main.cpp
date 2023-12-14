@@ -116,7 +116,6 @@ void main(int argc, char** argv)
     init();
 
     
-    
     glutKeyboardFunc(keyboard);
     glutDisplayFunc(welcomeDisplay); //opening
     //glutDisplayFunc(drawScene);
@@ -136,8 +135,13 @@ GLvoid drawScene()
     camera.setTarget(glm::vec3(LEGO.getPos().x, LEGO.getPos().y, LEGO.getPos().z));
 
     // 블록 <-> 캐릭터 충돌체크
-    if (blocks.checkCollision(LEGO.getPos()))
-        cout << "충돌" << endl;
+    if (blocks.checkCollision(LEGO.getPos()).getPos() == glm::vec3(-10, -10, -10)) {
+        LEGO.setPosY(LEGO.getPos().y - 0.01f);
+    }
+    else {
+        LEGO.setPosY(blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y);
+    }
+    
     
     camera.setCamera(shaderProgramID);
     LEGO.render(shaderProgramID);
@@ -230,12 +234,12 @@ void yAxisMovementTimer(int value)
     }
     if (jumpdown)
     {
-        LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
 
         if (LEGO.getPos().y > 0.f) {
             glutTimerFunc(25, yAxisMovementTimer, value);
         }
-        else if (LEGO.getPos().y <= 0.f) {
+        else if (LEGO.getPos().y <= blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y) {
             jumpdown = !jumpdown;
             //cout << "jump 끝" << endl;
         }

@@ -74,7 +74,7 @@ Block::Block()
     scale = glm::vec3(1.f, 1.f, 1.f);
 }
 
-Block::Block(int x, int y, int z)
+Block::Block(int x, int y, int z, bool random)
 {
     float vertexData[] = {
         // cube
@@ -149,12 +149,15 @@ Block::Block(int x, int y, int z)
     // 랜덤 이동 속도 설정
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> disVel(0.00f, 0.20f);
+    std::uniform_real_distribution<float> disVel(0.01f, 0.20f);
     std::uniform_real_distribution<float> disScaleVel(0.00f, 0.05f);
 
-    //velocity_x = disVel(gen);
-    velocity.y = disVel(gen);
-    //velocity_z = disVel(gen);
+    if (random) {
+        velocity.y = disVel(gen);
+    }
+    else {
+        velocity.y = 0.0f;
+    }
 
     // 스케일 속도
     scaleVelocity = disScaleVel(gen);

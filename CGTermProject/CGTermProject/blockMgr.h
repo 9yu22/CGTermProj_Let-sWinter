@@ -15,7 +15,7 @@ public:
 
 	void getInfo();
 
-	bool checkCollision(glm::vec3 characterPos);
+	Block checkCollision(glm::vec3 characterPos);
 	void moveAllBlocks();
 };
 
