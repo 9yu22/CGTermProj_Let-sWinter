@@ -82,5 +82,11 @@
     <None Include="fragment.frag">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="vertex2.vert">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="fragment2.frag">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

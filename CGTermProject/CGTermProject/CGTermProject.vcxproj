@@ -153,7 +153,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.frag" />
+    <None Include="fragment2.frag" />
     <None Include="vertex.vert" />
+    <None Include="vertex2.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

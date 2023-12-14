@@ -5,12 +5,12 @@
 BG::BG()
 {
     const vector<float> &temp = {
-        1, 0, -10, 0, 0, 1, 0, 1,
-        1, 1, -10, 0, 0, 1, 0, 0,
-        0, 1, -10, 0, 0, 1, 1, 0,
-        1, 0, -10, 0, 0, 1, 0, 1,
-        0, 1, -10, 0, 0, 1, 1, 0,
-        0, 0, -10, 0, 0, 1, 1, 1};
+        1, -1, 0, 0, 0, 1, 0, 1,
+        1, 1, 0, 0, 0, 1, 0, 0,
+        -1, 1, 0, 0, 0, 1, 1, 0,
+        1, -1, 0, 0, 0, 1, 0, 1,
+        -1, 1, 0, 0, 0, 1, 1, 0,
+        -1, -1, 0, 0, 0, 1, 1, 1};
 
     for (int i = 0; i < temp.size(); i += 8)
     {
@@ -20,19 +20,19 @@ BG::BG()
     }
     initPos();
     pos = glm::vec3(-25, -25, 0);
-    scale = glm::vec3(50, 50, 1);
+   scale = glm::vec3(100, 100, 1);
 }
 
 void BG::render(GLuint ID)
 {
     glUseProgram(ID);
 
-    model = glm::mat4(1.0);
-    model = glm::translate(model, pos);
+   model = glm::mat4(1.0);
+   model = glm::translate(model, pos);
     model = glm::scale(model, scale);
 
     glUniformMatrix4fv(glGetUniformLocation(ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(glGetUniformLocation(ID, "lightOn"), 0);
+   glUniform1i(glGetUniformLocation(ID, "lightOn"), 0);
 
     glBindVertexArray(vao);
 

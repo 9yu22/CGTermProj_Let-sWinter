@@ -74,7 +74,7 @@ Block::Block()
     scale = glm::vec3(1.f, 1.f, 1.f);
 }
 
-Block::Block(int x, int y, int z, bool random)
+Block::Block(int x, int y, int z, bool randomMoving, bool randomScale)
 {
     float vertexData[] = {
         // cube
@@ -152,7 +152,7 @@ Block::Block(int x, int y, int z, bool random)
     std::uniform_real_distribution<float> disVel(0.01f, 0.20f);
     std::uniform_real_distribution<float> disScaleVel(0.00f, 0.05f);
 
-    if (random) {
+    if (randomMoving) {
         velocity.y = disVel(gen);
     }
     else {
@@ -160,7 +160,11 @@ Block::Block(int x, int y, int z, bool random)
     }
 
     // 스케일 속도
-    scaleVelocity = disScaleVel(gen);
+    if (randomScale) {
+        scaleVelocity = disScaleVel(gen);
+    }
+    else
+        scaleVelocity = 0.f;
 }
 
 void Block::render(GLuint shaderProgramID)
@@ -185,7 +189,7 @@ void Block::render(GLuint shaderProgramID)
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
     glBindVertexArray(vao);
-    //glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     //glBindBuffer(cbo, 0);
     glDrawArrays(GL_TRIANGLES, 0, vtSize);
 }
@@ -210,29 +214,29 @@ void Block::initBuffer()
 
 void Block::initTexture()
 {
-    //glGenTextures(1, &texture);
-    //glBindTexture(GL_TEXTURE_2D, texture);
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    //int width, height, nrChannels;
-    ////unsigned char* data = stbi_load("LEGO_Texture.jpg", &width, &height, &nrChannels, 0);
-    //unsigned char* data = stbi_load("??.png", &width, &height, &nrChannels, 0);
+    int width, height, nrChannels;
+    //unsigned char* data = stbi_load("LEGO_Texture.jpg", &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load("block_texture.jpg", &width, &height, &nrChannels, 0);
 
-    //// cout << "check image load" << endl;
-    //// cout << width << " " << height << " " << nrChannels << endl;
+    // cout << "check image load" << endl;
+    // cout << width << " " << height << " " << nrChannels << endl;
 
-    //if (data) {
-    //    glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    //    // glGenerateMipmap(GL_TEXTURE_2D);
-    //}
-    //else {
-    //    std::cout << "Failed to load texture" << std::endl;
-    //}
-    //stbi_image_free(data);
+    if (data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        // glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
 }
 
 void Block::setVelocity(glm::vec3 vel)

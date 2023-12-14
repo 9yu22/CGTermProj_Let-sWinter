@@ -8,7 +8,8 @@
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-GLvoid keyboard(unsigned char key, int x, int y);
+GLvoid keyboardUp(unsigned char key, int x, int y);
+GLvoid keyboardDown(unsigned char key, int x, int y);
 void init();
 
 void blockMovingTimer(int value);
@@ -24,9 +25,10 @@ BG bg;
 BlockMgr blocks;
 
 float angle;
-float movementvalue = 0.15f;
+float movementvalue = 0.05f;
 bool blockMoving = true;
 
+void player_movement(int);
 void yAxisMovementTimer(int value);
 bool robotJump = false;
 bool jumpdown = false;
@@ -35,6 +37,10 @@ bool aleft = false;
 bool dright = false;
 bool wfront = false;
 bool sback = false;
+
+float jumpPos = 0.f;
+
+int score = 100;
 
 
 void welcomeDisplay()
@@ -92,6 +98,57 @@ void welcomeDisplay()
     glutSwapBuffers();
 }
 
+void EndScene()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3f(0.933333, 0.913725, 0.913725);
+    glRasterPos3f(-1, 0.5, 0);
+    char msg0[] = "* ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ *";
+    for (int i = 0; i < strlen(msg0); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg0[i]);
+    }
+
+    glColor3f(0.529412, 0.807843, 0.980392);
+    glRasterPos3f(-0.2, 0.1, 0);
+    char msg1[] = "The End";
+    for (int i = 0; i < strlen(msg1); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+    }
+
+    glColor3f(0.545098, 0.513725, 0.470588);
+    glRasterPos3f(-0.15, -0.2, 0);
+    char msg2[] = "Game Over";
+    for (int i = 0; i < strlen(msg2); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+    }
+    glColor3f(0.545098, 0.513725, 0.470588);
+    glRasterPos3f(-0.12, -0.25, 0);
+    char msg3[] = "your score is Zer0!!";
+    for (int i = 0; i < strlen(msg3); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+    }
+
+    glColor3f(0.933333, 0.913725, 0.913725);
+    glRasterPos3f(-1, -0.5, 0);
+    char msg4[] = "* ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ * ~ *";
+    for (int i = 0; i < strlen(msg4); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg4[i]);
+    }
+    //std::string input;
+    //std::getline(std::cin, input);
+    //PlaySound(0, 0, 0);
+    //std::cout << "Stopped music \n";
+
+    //std::getline(std::cin, input);
+    //std::cout << "Playing music \n";
+    //PlaySound(TEXT("audio.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+
+    //std::getline(std::cin, input);
+
+
+    glutSwapBuffers();
+}
+
 
 void main(int argc, char** argv)
 {
@@ -113,18 +170,23 @@ void main(int argc, char** argv)
     glEnable(GL_CULL_FACE);
 
     shaderProgramID = initShader("vertex.vert", "fragment.frag");
-    
+
     LEGO.initBuffer();
     LEGO.initTexture();
 
     blocks.initList();
-    
+
     init();
 
     
-    glutKeyboardFunc(keyboard);
+
+    glutKeyboardUpFunc(keyboardUp);
+    glutKeyboardFunc(keyboardDown);
+
     glutDisplayFunc(welcomeDisplay); //opening
+
     //glutDisplayFunc(drawScene);
+
     glutReshapeFunc(Reshape);
     glutMainLoop();
 }
@@ -134,27 +196,40 @@ GLvoid drawScene()
     glClearColor(g_color[0], g_color[1], g_color[2], g_color[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shaderProgramID);
-
-    // 카메라 시점 -> 캐릭터에게 고정
-    camera.setEye(glm::vec3(LEGO.getPos().x, LEGO.getPos().y + 1.f, LEGO.getPos().z + 10.f));
-    camera.setTarget(glm::vec3(LEGO.getPos().x, LEGO.getPos().y, LEGO.getPos().z));
+    //glUseProgram(shaderProgramID);
 
     // 블록 <-> 캐릭터 충돌체크
     if (blocks.checkCollision(LEGO.getPos()).getPos() == glm::vec3(-10, -10, -10)) {
         LEGO.setPosY(LEGO.getPos().y - 0.01f);
     }
     else {
-        LEGO.setPosY(blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y);
+        if (LEGO.getPos().y <= blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y)
+            LEGO.setPosY(blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y);
+        else
+            if (!robotJump && !jumpdown)
+                LEGO.setPosY(blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y);
+            else
+                LEGO.setPosY(LEGO.getPos().y - 0.01f);
     }
-    
-    
+
+    // 카메라 시점 -> 캐릭터에게 고정
+    camera.setEye(glm::vec3(LEGO.getPos().x, LEGO.getPos().y + 5.f, LEGO.getPos().z + 10.f));
+    camera.setTarget(glm::vec3(LEGO.getPos().x, LEGO.getPos().y, LEGO.getPos().z));
+
+    bg.render(shaderProgramID);
     camera.setCamera(shaderProgramID);
     LEGO.render(shaderProgramID);
     blocks.render(shaderProgramID);
-    bg.render(shaderProgramID);
-    
+
+    //cout << LEGO.getPos().x << ", " << LEGO.getPos().y << ", " << LEGO.getPos().z << endl;
+
+
     glutSwapBuffers();
+
+    //if (score < 90) {
+    //    glutDisplayFunc(EndScene);
+    //    glutIdleFunc(drawScene);
+    //}
 }
 
 GLvoid Reshape(int w, int h)
@@ -162,7 +237,7 @@ GLvoid Reshape(int w, int h)
     glViewport(0, 0, 800, 800);
 }
 
-GLvoid keyboard(unsigned char key, int x, int y)
+GLvoid keyboardDown(unsigned char key, int x, int y)
 {
     switch (key)
     {
@@ -170,6 +245,7 @@ GLvoid keyboard(unsigned char key, int x, int y)
     case 'X':
         glutDisplayFunc(drawScene);
         glutTimerFunc(50, blockMovingTimer, 1);
+        glutTimerFunc(1000 / 60, player_movement, 0);
         break;
 
     case 'r':
@@ -179,36 +255,21 @@ GLvoid keyboard(unsigned char key, int x, int y)
 
     case 'a':
         aleft = true;
-        dright = false;
-        wfront = false;
-        sback = false;
-        LEGO.setPosX(LEGO.getPos().x - movementvalue);
         break;
     case 'd':
-        aleft = false;
         dright = true;
-        wfront = false;
-        sback = false;
-        LEGO.setPosX(LEGO.getPos().x + movementvalue);
         break;
     case 'w':
-        aleft = false;
-        dright = false;
         wfront = true;
-        sback = false;
-        LEGO.setPosZ(LEGO.getPos().z - movementvalue);
         break;
     case 's':
-        aleft = false;
-        dright = false;
-        wfront = false;
         sback = true;
-        LEGO.setPosZ(LEGO.getPos().z + movementvalue);
         break;
 
     case 'f': //jump
+        if (robotJump) break;
         robotJump = true;
-        glutTimerFunc(10, yAxisMovementTimer, 1);
+        jumpPos = LEGO.getPos().y;
         break;
 
 
@@ -218,6 +279,68 @@ GLvoid keyboard(unsigned char key, int x, int y)
         break;
     }
     glutPostRedisplay();
+}
+
+GLvoid keyboardUp(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+    case 'a':
+        aleft = false;
+        break;
+    case 'd':
+        dright = false;
+        break;
+    case 'w':
+        wfront = false;
+        break;
+    case 's':
+        sback = false;
+        break;
+    }
+    glutPostRedisplay();
+}
+
+void player_movement(int value)
+{
+    if (aleft) {
+        LEGO.setPosX(LEGO.getPos().x - movementvalue);
+    }
+    else if (dright) {
+        LEGO.setPosX(LEGO.getPos().x + movementvalue);
+    }
+    if (wfront) {
+        LEGO.setPosZ(LEGO.getPos().z - movementvalue);
+    }
+    else if (sback) {
+        LEGO.setPosZ(LEGO.getPos().z + movementvalue);
+    }
+
+    if (robotJump) {
+        LEGO.setPosY(LEGO.getPos().y + 0.1);
+        //cout << LEGO.getPos().y << endl;
+
+        if (jumpPos + 1.0f < LEGO.getPos().y) {
+            robotJump = false;
+        }
+    }
+    if (!robotJump)
+        LEGO.setPosY(LEGO.getPos().y - 0.05);
+
+    if (LEGO.getPos().y < -10) {
+        LEGO.setPos(glm::vec3(-10.f, 0.0f, 10.f));
+        if (score >0) {
+            score -= 10;
+            cout << score << endl;
+            if (score == 0) {
+                cout << "Your score is zer0\n Game Over!!" << endl;
+                exit(0);
+            }
+        }
+        
+    }
+
+    glutTimerFunc(1000 / 60, player_movement, value);
 }
 
 void init()
@@ -238,28 +361,32 @@ void blockMovingTimer(int value)
 
 void yAxisMovementTimer(int value)
 {
+    //aleft = false;
+    //dright = false;
+    //wfront = false;
+    //sback = false;
 
     if (robotJump) {
         if (aleft) {
-            LEGO.setPosX(LEGO.getPos().x - movementvalue);
+            // LEGO.setPosX(LEGO.getPos().x - movementvalue);
             LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         }
         else if (dright) {
-            LEGO.setPosX(LEGO.getPos().x + movementvalue);
+            // LEGO.setPosX(LEGO.getPos().x + movementvalue);
             LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         }
         else if (wfront) {
-            LEGO.setPosZ(LEGO.getPos().z - movementvalue);
+            // LEGO.setPosZ(LEGO.getPos().z - movementvalue);
             LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         }
         else if (sback) {
-            LEGO.setPosZ(LEGO.getPos().z + movementvalue);
+            // LEGO.setPosZ(LEGO.getPos().z + movementvalue);
             LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         }
         else LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         //cout << LEGO.getPos().y << endl;
 
-        if (LEGO.getPos().y > 0.5f) {
+        if (LEGO.getPos().y > 1.0f) {
             robotJump = false;
             jumpdown = true;
             glutTimerFunc(25, yAxisMovementTimer, value);
@@ -273,22 +400,22 @@ void yAxisMovementTimer(int value)
     if (jumpdown)
     {
         if (aleft) {
-            LEGO.setPosX(LEGO.getPos().x - movementvalue);
-            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+            // LEGO.setPosX(LEGO.getPos().x - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
         }
         else if (dright) {
-            LEGO.setPosX(LEGO.getPos().x + movementvalue);
-            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+            // LEGO.setPosX(LEGO.getPos().x + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
         }
         else if (wfront) {
-            LEGO.setPosZ(LEGO.getPos().z - movementvalue);
-            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+            // LEGO.setPosZ(LEGO.getPos().z - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
         }
         else if (sback) {
-            LEGO.setPosZ(LEGO.getPos().z + movementvalue);
-            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+            // LEGO.setPosZ(LEGO.getPos().z + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
         }
-        else LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        else LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
 
         if (LEGO.getPos().y > 0.f) {
             glutTimerFunc(25, yAxisMovementTimer, value);

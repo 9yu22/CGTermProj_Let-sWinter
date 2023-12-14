@@ -16,7 +16,7 @@ character::character()
         uvs[i] = objReader.out_uvs[i];
     }
 
-    pos = glm::vec3(0.f, 0.0f, 0.f);
+    pos = glm::vec3(-10.f, 0.0f, 10.f);
     scale = glm::vec3(0.3, 0.3, 0.3);
 }
 

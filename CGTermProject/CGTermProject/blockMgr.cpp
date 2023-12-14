@@ -2,43 +2,31 @@
 
 BlockMgr::BlockMgr()
 {
-	Block centerB(0, -2, 0, false);
-	this->blockList.push_back(centerB);
+	//Block centerB(0, -2, 0, false);
+	//this->blockList.push_back(centerB);
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
-		{
-			Block newB(-6 + j * 4, -2, 6 + -i * 4, true);
-			this->blockList.push_back(newB);
-		}
+		Block newB(-6 + i * 4, -2, 10, true, false);
+		this->blockList.push_back(newB);
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
-		{
-			Block newB(-22 + j * 4, -2, 22 + -i * 4, true);
-			this->blockList.push_back(newB);
-		}
+		Block newB(-10, -2, 10 + i * 4, true, true);
+		this->blockList.push_back(newB);
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
-		{
-			Block newB(-6 + j * 4, -2, 44 + -i * 4, false);
-			this->blockList.push_back(newB);
-		}
+		Block newB(-6 + i * 4, -2, 50, true, false);
+		this->blockList.push_back(newB);
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
-		{
-			Block newB(22 + j * 4, -2, 22 + -i * 4, true);
-			this->blockList.push_back(newB);
-		}
+		Block newB(12, -2, 10 + i * 4, true, true);
+		this->blockList.push_back(newB);
 	}
 }
 
@@ -77,11 +65,10 @@ Block BlockMgr::checkCollision(glm::vec3 characterPos)
 			//cout << "블록영역" << endl;
 			//cout << "내 위치: " << characterPos.x << "," << characterPos.y << "," << characterPos.z << endl;
 			//cout << "블록(-x~x / -z~z): " << b.getPos().x - b.getScale().x / 2 << "," << b.getPos().x + b.getScale().x / 2 << endl;
-			if (characterPos.y <= b.getPos().y + b.getScale().y)
-				return b;
+			return b;
 		}
 	}
-	return Block(-10, -10, -10, false);
+	return Block(-10, -10, -10, false, false);
 	
 }
 
