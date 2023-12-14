@@ -31,6 +31,12 @@ void yAxisMovementTimer(int value);
 bool robotJump = false;
 bool jumpdown = false;
 
+bool aleft = false;
+bool dright = false;
+bool wfront = false;
+bool sback = false;
+
+
 void welcomeDisplay()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -172,17 +178,34 @@ GLvoid keyboard(unsigned char key, int x, int y)
         break;
 
     case 'a':
+        aleft = true;
+        dright = false;
+        wfront = false;
+        sback = false;
         LEGO.setPosX(LEGO.getPos().x - movementvalue);
         break;
     case 'd':
+        aleft = false;
+        dright = true;
+        wfront = false;
+        sback = false;
         LEGO.setPosX(LEGO.getPos().x + movementvalue);
         break;
     case 'w':
+        aleft = false;
+        dright = false;
+        wfront = true;
+        sback = false;
         LEGO.setPosZ(LEGO.getPos().z - movementvalue);
         break;
     case 's':
+        aleft = false;
+        dright = false;
+        wfront = false;
+        sback = true;
         LEGO.setPosZ(LEGO.getPos().z + movementvalue);
         break;
+
     case 'f': //jump
         robotJump = true;
         glutTimerFunc(10, yAxisMovementTimer, 1);
@@ -217,8 +240,23 @@ void yAxisMovementTimer(int value)
 {
 
     if (robotJump) {
-
-        LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        if (aleft) {
+            LEGO.setPosX(LEGO.getPos().x - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        }
+        else if (dright) {
+            LEGO.setPosX(LEGO.getPos().x + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        }
+        else if (wfront) {
+            LEGO.setPosZ(LEGO.getPos().z - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        }
+        else if (sback) {
+            LEGO.setPosZ(LEGO.getPos().z + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (0.05));
+        }
+        else LEGO.setPosY(LEGO.getPos().y + value * (0.05));
         //cout << LEGO.getPos().y << endl;
 
         if (LEGO.getPos().y > 0.5f) {
@@ -234,12 +272,28 @@ void yAxisMovementTimer(int value)
     }
     if (jumpdown)
     {
-        LEGO.setPosY(LEGO.getPos().y + value * (-0.05));
+        if (aleft) {
+            LEGO.setPosX(LEGO.getPos().x - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        }
+        else if (dright) {
+            LEGO.setPosX(LEGO.getPos().x + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        }
+        else if (wfront) {
+            LEGO.setPosZ(LEGO.getPos().z - movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        }
+        else if (sback) {
+            LEGO.setPosZ(LEGO.getPos().z + movementvalue);
+            LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
+        }
+        else LEGO.setPosY(LEGO.getPos().y + value * (-0.1));
 
         if (LEGO.getPos().y > 0.f) {
             glutTimerFunc(25, yAxisMovementTimer, value);
         }
-        else if (LEGO.getPos().y <= blocks.checkCollision(LEGO.getPos()).getPos().y + blocks.checkCollision(LEGO.getPos()).getScale().y) {
+        else if (LEGO.getPos().y <= 0.f) {
             jumpdown = !jumpdown;
             //cout << "jump ³¡" << endl;
         }
